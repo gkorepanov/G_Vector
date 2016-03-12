@@ -1,8 +1,8 @@
 //This is a template class. Thus Implementation is placed in .h
 
-////////////////////////////////////////////////////////////////////////////////////////////////
-//DECLARATION
-////////////////////////////////////////////////////////////////////////////////////////////////
+//////////////////////////////////////////////////////////////////////////////////////////
+// DECLARATION
+//////////////////////////////////////////////////////////////////////////////////////////
 
 
 /* TODO(#1). All errors are leading to exit(1) now.
@@ -21,6 +21,11 @@ using namespace std;
 typedef unsigned int uint;
 typedef unsigned long int luint;
 #define TPL template <typename T>
+
+
+///////////////////////////////////////////////////////////////////////////////////////////
+// CLASS DECLARATION
+///////////////////////////////////////////////////////////////////////////////////////////
 
 //declaration of class for friends:
 template <typename T = int> class CVector; 
@@ -58,12 +63,19 @@ class CVector {
         void print_data() const;
 };
 
+///////////////////////////////////////////////////////////////////////////////////////////////
+// END OF CLASS DECLARATION
+///////////////////////////////////////////////////////////////////////////////////////////////
 
 /*function needed for reallocating to a new size
 QUESTION (#2): where do i put it? Another class/another header/here?*/
 inline luint floor_power_of_2(luint num);
 
-//a number of function used by print_data. QUESTION(#2)
+
+///////////////////////////////////////////////////////////////////////////////////////////////
+// DUMP and PRINT_DATA slaves. QUESTION(#2)
+///////////////////////////////////////////////////////////////////////////////////////////////
+
 inline void print_line();
 
 TPL
@@ -72,43 +84,12 @@ void print_elem(T elem);
 TPL
 uint elem_length(T elem);
 
+
+const uint STDOUT_STR_LEN = 100;
+
 ////////////////////////////////////////////////////////////////////////////////////////////////
 //IMPLEMENTATION
 ////////////////////////////////////////////////////////////////////////////////////////////////
-
-const uint STDOUT_STR_LEN = 100;
-void print_line() {
-    for (uint i = 0; i < STDOUT_STR_LEN; i++)
-        printf("-");
-
-    printf("\n");
-}
-
-TPL
-void print_elem(T elem) {
-    ERR("No printing function for specific type T");
-}
-
-template <> void print_elem <int> (int elem) {
-    printf("%d", elem);
-}
-
-TPL
-uint elem_length(T elem) {
-    ERR("No function to know length of specific element of type T");
-}
-
-template <> uint elem_length <int> (int elem) {
-    //printf("\nELEM: %d; ", elem);
-    uint i(0);
-    do {
-        elem /= 10;
-        i++;
-    } while (elem);
-     
-    //printf("LENGTH: %d\n", i);
-    return i;
-}
 
 luint floor_power_of_2(luint num) {
     DBGPRINT("Function floor_power of_2 got %lu", num);
@@ -250,6 +231,11 @@ void CVector<T>::grow(const size_t request_size) {
     }   
 }
 
+
+/////////////////////////////////////////////////////////////////////////////////////////////
+// DUMP, PRINT_DATA and their slaves
+/////////////////////////////////////////////////////////////////////////////////////////////
+
 TPL
 void CVector<T>::dump() const {
     printf("\n");
@@ -320,4 +306,37 @@ void CVector<T>::print_data() const {
 
         i++;
     }
+}
+
+void print_line() {
+    for (uint i = 0; i < STDOUT_STR_LEN; i++)
+        printf("-");
+
+    printf("\n");
+}
+
+TPL
+void print_elem(T elem) {
+    ERR("No printing function for specific type T");
+}
+
+template <> void print_elem <int> (int elem) {
+    printf("%d", elem);
+}
+
+TPL
+uint elem_length(T elem) {
+    ERR("No function to know length of specific element of type T");
+}
+
+template <> uint elem_length <int> (int elem) {
+    //printf("\nELEM: %d; ", elem);
+    uint i(0);
+    do {
+        elem /= 10;
+        i++;
+    } while (elem);
+     
+    //printf("LENGTH: %d\n", i);
+    return i;
 }
