@@ -8,7 +8,9 @@
 /* TODO(#1): All errors are leading to exit(1) now.
    Exceptions handling must be implemented.
  
-   TODO: more information about fatal errors is required.*/
+   TODO: more information about fatal errors is required.
+ 
+   TODO(#1): when exception is thrown and exit(1) is called, memory leaks.*/
 
 #include <stdio.h>
 #include <new>

@@ -12,9 +12,9 @@ int main(int argc, char** argv) {
     a.dump();
     b.dump();
     
-    printf("a = a + b * 8");
+    printf("a = a*(-1) + b * 8\n");
 
-    a = a + b * 8;
+    a = a * (-1) + b * 8;
     
     a.dump();
 
