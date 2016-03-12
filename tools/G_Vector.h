@@ -5,8 +5,10 @@
 //////////////////////////////////////////////////////////////////////////////////////////
 
 
-/* TODO(#1). All errors are leading to exit(1) now.
-   Exceptions handling must be implemented.*/
+/* TODO(#1): All errors are leading to exit(1) now.
+   Exceptions handling must be implemented.
+ 
+   TODO: more information about fatal errors is required.*/
 
 #include <stdio.h>
 #include <new>
@@ -51,7 +53,7 @@ class CVector {
         CVector(const CVector<T>& that);
         ~CVector();
 
-        int& operator [] (const uint ind) const;
+        T& operator [] (const uint ind) const;
         CVector<T> operator = (const CVector<T>& vec);       
         friend CVector<T> operator + <> (const CVector<T>& lhs, const CVector<T>& rhs);
         friend CVector<T> operator * <> (const CVector<T>& vec, int num);
@@ -112,6 +114,7 @@ class smart_ptr_deleter {
     public:
         void operator () (T* ptr) {
             delete[] ptr;
+            DBGPRINT("Memory freed.");
         }
 };
 
@@ -121,7 +124,7 @@ uint CVector<T>::counter(0);
 TPL
 CVector<T>::CVector(const int init_size)
     try :
-        data_(new int(init_size), smart_ptr_deleter<T>()),
+        data_(new T[init_size], smart_ptr_deleter<T>()),
         size_(init_size),
         id_(CVector<T>::counter)
     {
@@ -129,6 +132,8 @@ CVector<T>::CVector(const int init_size)
 
         for (uint i = 0; i < init_size; i++)
             (data_.get())[i] = 0;
+
+        DBGPRINT("Memory allocated.");
     }
     catch (bad_alloc ex) {
         EXERR("Couldn't allocate memory for new CVector copy");
@@ -153,7 +158,7 @@ TPL
 CVector<T> CVector<T>::operator = (const CVector<T>& vec) {
     try {
         if (size_ != vec.size_) 
-            throw;
+            throw 1;
         for (uint i = 0; i < size_; i++)
             (*this)[i] = vec[i];
 
@@ -166,15 +171,16 @@ CVector<T> CVector<T>::operator = (const CVector<T>& vec) {
     
 
 TPL
-int& CVector<T>::operator [] (const uint ind) const {
+T& CVector<T>::operator [] (const uint ind) const {
     try {
         if ((ind < 0) || (ind >= size_))
-            throw;
+            throw 1;
         
         return (data_.get())[ind];
     }
     catch(...) {
         EXERR("Ind = %u is out of bounds. SIZE: %zu", ind, size_);
+        dump(); // That function is not called. Handle it.
     }
 }
 
@@ -182,7 +188,7 @@ TPL
 CVector<T> operator + (const CVector<T>&lhs, const CVector<T>&rhs) {
     try {
         if (lhs.size_ != rhs.size_)
-            throw;
+            throw 1;
         
         CVector<T> res(lhs.size_);
 
@@ -210,7 +216,7 @@ TPL
 void CVector<T>::grow(const size_t request_size) {
     try {
         if ((request_size < 0) || (request_size > MAX_SIZE))
-            throw;
+            throw 1;
         
         const size_t new_size(min(floor_power_of_2(request_size*2), MAX_SIZE));
         
@@ -303,8 +309,8 @@ void CVector<T>::print_data() const {
             print_line();
             cur_len = 0;
         }
-
-        i++;
+        cur_len += length + 1;
+        i++; 
     }
 }
 
@@ -330,13 +336,11 @@ uint elem_length(T elem) {
 }
 
 template <> uint elem_length <int> (int elem) {
-    //printf("\nELEM: %d; ", elem);
-    uint i(0);
+    uint i((elem < 0) ? 1 : 0);
     do {
         elem /= 10;
         i++;
     } while (elem);
      
-    //printf("LENGTH: %d\n", i);
     return i;
 }

@@ -7,6 +7,12 @@
 
 #ifdef DEBUGMODE
 
+
+#define ERRORSTR\
+    fprintf(stderr, "------------------------------------------------------------------------------------------------\n"\
+                    "|                                         FATAL ERROR                                          |\n"\
+                    "------------------------------------------------------------------------------------------------\n");
+
 //for errors, caused by user. Normally thay must be implemented through ex's TODO(#1)
 #define USERERR(...)\
     {\
@@ -19,17 +25,17 @@
    they should be handled as well TODO(#1)*/
 #define EXERR(...)\
     {\
-        fprintf(stderr, "FATAL ERROR: " __VA_ARGS__);\
-        fprintf(stderr, "\nFile: %s\nLine: %d\nFunction: %s\n", __FILE__, __LINE__, __PRETTY_FUNCTION__);\
-        fflush(stderr);\
-        exit(1);\
+        ERR(__VA_ARGS__);\
     }
 
 //Actually, that is the core of alerts.h. For debugging the code and getting maximum information.
 #define ERR(...)\
     {\
-        fprintf(stderr, "FATAL ERROR: " __VA_ARGS__);\
-        fprintf(stderr, "\nFile: %s\nLine: %d\nFunction: %s\n", __FILE__, __LINE__, __PRETTY_FUNCTION__);\
+        ERRORSTR\
+        fprintf(stderr,  __VA_ARGS__);\
+        fprintf(stderr, "\nINFORMATION:"\
+                        "\nFile: %s\nLine: %d\nFunction: %s\n",\
+                        __FILE__, __LINE__, __PRETTY_FUNCTION__);\
         fflush(stderr);\
         exit(1);\
     }
@@ -37,6 +43,7 @@
 #define DBGPRINT(...)\
     {\
         printf(__VA_ARGS__);\
+        printf("\n");\
     }
 
 #endif
