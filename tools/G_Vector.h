@@ -26,6 +26,11 @@ typedef unsigned int uint;
 typedef unsigned long int luint;
 #define TPL template <typename T>
 
+//_____COMMENT________
+//Add core methods. And reimplement external functions with using this core.
+//Add checks of validity of vector. 
+//
+
 
 ///////////////////////////////////////////////////////////////////////////////////////////
 // CLASS DECLARATION
@@ -74,7 +79,8 @@ class CVector {
 /*function needed for reallocating to a new size
 QUESTION (#2): where do i put it? Another class/another header/here?*/
 inline luint floor_power_of_2(luint num);
-
+//If you have a lot of useful functions like this and you use it in many methods or many times, it's better place in some util file.
+//If you use it once, place it near the implementation of method, where you use it.
 
 ///////////////////////////////////////////////////////////////////////////////////////////////
 // DUMP and PRINT_DATA slaves. QUESTION(#2)
@@ -160,7 +166,7 @@ TPL
 CVector<T> CVector<T>::operator = (const CVector<T>& vec) {
     try {
         if (size_ != vec.size_) 
-            throw 1;
+            throw 1;//may be better use your own class exceptions or from standart library. It can be more informative
         for (uint i = 0; i < size_; i++)
             (*this)[i] = vec[i];
 
@@ -227,7 +233,7 @@ void CVector<T>::grow(const size_t request_size) {
         for(uint i = 0; i < size_; i++) 
             (new_data.get())[i] = (data_.get())[i];
 
-        data_.swap(new_data);
+        data_.swap(new_data);//will the old data_ be deleted after that?
     }
     catch(bad_alloc ex) {
         /*TODO: make new allocator that throws an ex with class derived from bad_alloc 
@@ -264,7 +270,7 @@ void CVector<T>::dump() const {
 
 //TODO: divide into functions and make it readable, beautiful
 TPL
-void CVector<T>::print_data() const {
+void CVector<T>::print_data() const { 
     uint length(5), lengthi, lengthe;
 
     for (uint i = 0; i < size_; i++) {
@@ -324,7 +330,7 @@ void print_line() {
 }
 
 TPL
-void print_elem(T elem) {
+void print_elem(T elem) {//may be implement separate function for printing int or other numbers. It's not good to have this kinda plug.
     ERR("No printing function for specific type T");
 }
 
